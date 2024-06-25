@@ -1,0 +1,14 @@
+{
+    "productReview": {
+      "productCategory": "Produktkategorie",
+      "description": "Beschreibung",
+      "rating": "Bewertung",
+      "reviews": "Bewertungen",
+      "comment": "Kommentar",
+      "goBack": "Zurück zur Liste",
+      "category":"Kategorie",
+      "id":"Ausweis",
+      "dateCreated":"Datum erstellt"
+    }
+  }
+  

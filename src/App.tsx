@@ -1,25 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Suspense, useState } from "react";
+import { RouterProvider } from "react-router-dom";
+import Loading from "./components/ui/Loading";
+import { languageContext, languageList, LanguageProps } from "./context/LanguageContext";
+import ProductAppStyles from "./index.module.scss";
+import Routes from "./routes";
 
 function App() {
+  const [lang, setSelectedLanguage] = useState<LanguageProps>("en");
+
+  const handleLanguageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const lang = event.target.value as LanguageProps;
+    setSelectedLanguage(lang);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <languageContext.Provider
+      value={{
+        language: lang,
+        setState: setSelectedLanguage,
+      }}
+    >
+        <div>
+          <select onChange={handleLanguageChange} className={ProductAppStyles.language}>
+            {languageList.map((item) => {
+              return (
+                <option key={item} selected={item==='en'} defaultValue="en" value={item}>
+                  {item.toUpperCase()}
+                </option>
+              );
+            })}
+          </select>
+          <Suspense fallback={<Loading />}>
+            <RouterProvider router={Routes} />
+          </Suspense>
+        </div>
+    </languageContext.Provider>
   );
 }
 

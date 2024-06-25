@@ -1,0 +1,12 @@
+{
+    "productReview": {
+      "productCategory": "Catégorie de Produit",
+      "description": "Description",
+      "rating": "Évaluation",
+      "reviews": "Avis",
+      "comment": "Commentaire",
+      "goBack": "Retourner à la liste",
+      "dateCreated":"date créée"
+    }
+  }
+  

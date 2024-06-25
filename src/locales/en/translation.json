@@ -1,0 +1,12 @@
+{
+    "productReview": {
+      "productCategory": "Product Category",
+      "description": "Description",
+      "rating": "Rating",
+      "reviews": "Reviews",
+      "comment": "Comment",
+      "goBack": "Go back to list",
+      "id":"id"
+    }
+  }
+  
