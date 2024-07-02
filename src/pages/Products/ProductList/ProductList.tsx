@@ -28,21 +28,22 @@ const ProductList = () => {
   const navigate = useNavigate();
   const { data, loading } = useApi(`${urls.productList}`);
   const productListData = data!! as productListProps;
-  if (loading) {
-    <Loading />;
-  }
+  
 
   const handleEvent: GridEventListener<"rowClick"> = (
     params // GridRowParams
   ) => {
     const { row } = params;
-    return navigate(`/productbyId/${row.id}`);
+    return navigate(`/${urls.productById}${row.id}`);
   };
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <div className={productListStyles.container}>
       <h4 className={productListStyles.container__geader}>Product List</h4>
-
       {productListData?.products && productListData?.products.length > 0 && (
         <DataGrid
           rows={productListData?.products}

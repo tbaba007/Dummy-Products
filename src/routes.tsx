@@ -12,7 +12,7 @@ const Routes=createBrowserRouter([
         
     },
     {
-        path:'/productbyId/:productId',
+        path:'/products/:productId',
         Component:()=><ProductReview/>
     },
     {

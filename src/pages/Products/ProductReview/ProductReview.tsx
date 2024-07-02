@@ -21,14 +21,15 @@ const ProductReview = () => {
   const { productId } = params;
   const { data, error, loading } = useApi(`${urls.productById}${productId}`);
   const [product, setProduct] = useState<Partial<productProps>>({});
+
   useEffect(() => {
     if (data) {
       i18n.changeLanguage(selectedLanguage?.language);
-
-      const productData: productProps = data as productProps;
+      const productData: productProps = data;
       setProduct(productData);
     }
   }, [data, i18n, selectedLanguage?.language]);
+  
   if (loading) {
     return <Loading />;
   }
@@ -36,6 +37,11 @@ const ProductReview = () => {
     return <ErrorPage />;
   }
 
+
+  const HandleCallEndPoint=()=>{
+    const {data}=useApi(`${urls.productById}${productId}`);
+    console.log(data)
+  }
   const ProductReviews = ({ reviews }: Partial<productProps>) => {
     if (!Array.isArray(reviews)) {
       return null;
@@ -87,9 +93,7 @@ const ProductReview = () => {
         </section>
 
         <section>
-          <Link to="/">
-            <ProductButton text={t("productReview.goBack")} />
-          </Link>
+            <ProductButton text={t("productReview.goBack")} onClick={HandleCallEndPoint} />
         </section>
       </div>
     </>

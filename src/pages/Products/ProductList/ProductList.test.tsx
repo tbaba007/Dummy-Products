@@ -1,49 +1,87 @@
-import { render, waitFor } from '@testing-library/react';
-import useApi from '../../../hooks/useApi';
-import { urls } from '../../../utils/urls';
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 
-// Mock the implementation of useApi
-jest.mock('../../../hooks/useApi');
-const mockUseApi = useApi as jest.Mock;
+import useApi from "../../../hooks/useApi";
+import { urls } from "../../../utils/urls";
+import ProductList from "./ProductList";
 
-const TestComponent = () => {
-    const { data, error, loading } = useApi(`${urls.productList}`);
+// Mock the useApi hook
+jest.mock("../../../hooks/useApi");
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-    return <div>{JSON.stringify(data)}</div>;
-};
+const mockNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate,
+}));
 
-describe('Test ProductList Api', () => {
-    it('should load all products', async () => {
-        const mockData = [{ id: 1, name: 'Product 1' }, { id: 2, name: 'Product 2' }];
-        
-        // Set up the mock implementation to return the mock data
-        mockUseApi.mockReturnValue({
-            data: mockData,
-            error: null,
-            loading: false,
-        });
+const mockProducts = [
+  {
+    id: 1,
+    title: "Essence Mascara Lash Princess",
+    description: "Description 1",
+    category: "Category 1",
+    meta: { createdAt: "2023-01-01T00:00:00Z" },
+  },
+  {
+    id: 3,
+    title: "Powder Canister",
+    description: "Description 2",
+    category: "Category 2",
+    meta: { createdAt: "2023-01-02T00:00:00Z" },
+  },
+];
 
-        const { getByText } = render(<TestComponent />);
-        
-        // Wait for the data to be loaded and displayed
-        await waitFor(() => {
-            expect(getByText(JSON.stringify(mockData))).toBeInTheDocument();
-        });
+describe("ProductList Component", () => {
+  it("renders loading state initially", async() => {
+    (useApi as jest.Mock).mockReturnValue({ data: null, loading: true });
+     render(
+      <BrowserRouter>
+        <ProductList />
+      </BrowserRouter>
+    );
+    
+    expect(screen.getByText('Loading......')).toBeInTheDocument();
+  });
+
+  it("renders product list when data is available", async () => {
+    (useApi as jest.Mock).mockReturnValue({
+      data: { products: mockProducts },
+      loading: false,
+    });
+    render(
+      <BrowserRouter>
+        <ProductList />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Product List")).toBeInTheDocument();
     });
 
-    it('should show loading state', async () => {
-        // Set up the mock implementation to return loading state
-        mockUseApi.mockReturnValue({
-            data: null,
-            error: null,
-            loading: true,
-        });
+    expect(screen.getByText("Essence Mascara Lash Princess")).toBeInTheDocument();
+    expect(screen.getByText("Category")).toBeInTheDocument();
+  });
 
-        const { getByText } = render(<TestComponent />);
-        
-        // Verify the loading state
-        expect(getByText('Loading...')).toBeInTheDocument();
+  it("handles row click and navigates to product detail page", async () => {
+    (useApi as jest.Mock).mockReturnValue({
+      data: { products: mockProducts },
+      loading: false,
     });
+    render(
+      <BrowserRouter>
+        <ProductList />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Essence Mascara Lash Princess")).toBeInTheDocument();
+    });
+
+    const firstRow = screen.getByText("Essence Mascara Lash Princess").closest("div[role='row']");
+    if (firstRow) {
+      fireEvent.click(firstRow);
+    }
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/${urls.productById}1`);
+  });
 });
