@@ -38,10 +38,7 @@ const ProductReview = () => {
   }
 
 
-  const HandleCallEndPoint=()=>{
-    const {data}=useApi(`${urls.productById}${productId}`);
-    console.log(data)
-  }
+ 
   const ProductReviews = ({ reviews }: Partial<productProps>) => {
     if (!Array.isArray(reviews)) {
       return null;
@@ -92,9 +89,9 @@ const ProductReview = () => {
           {ProductReviews(product)}
         </section>
 
-        <section>
-            <ProductButton text={t("productReview.goBack")} onClick={HandleCallEndPoint} />
-        </section>
+        <Link to="/">
+            <ProductButton text={t("productReview.goBack")}  />
+        </Link>
       </div>
     </>
   );
